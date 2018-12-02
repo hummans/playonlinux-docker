@@ -15,20 +15,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
-SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
-if [ ! -d "$SCRIPTPATH/config" ]; then
-  mkdir -p "$SCRIPTPATH/config"
-fi
+# install wine and links to binaries
+/usr/share/playonlinux/playonlinux-bash /usr/local/bin/install_vcmp
 
-docker run \
-	-it \
-	--privileged \
-	--device /dev/dri/card0:/dev/dri/card0 \
-	--device /dev/snd \
-	-e DISPLAY \
-	-v $SCRIPTPATH/config:/home/wine:rw \
-	-v /tmp/.X11-unix:/tmp/.X11-unix:rw \
-	-v /dev/snd:/dev/snd:rw \
-	--hostname playonlinux-docker \
-	playonlinux
+# start PlayOnLinux
+playonlinux
 

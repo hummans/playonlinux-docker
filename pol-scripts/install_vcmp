@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env playonlinux-bash
+#
 # This file is part of playonlinux-docker
 # https://github.com/mgafner/playonlinux-docker
 #
@@ -15,20 +16,24 @@
 # You should have received a copy of the GNU General Public License
 # along with this file.  If not, see <http://www.gnu.org/licenses/>.
 
-SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
-if [ ! -d "$SCRIPTPATH/config" ]; then
-  mkdir -p "$SCRIPTPATH/config"
+[ "$PLAYONLINUX" = "" ] && exit 0
+source "$PLAYONLINUX/lib/sources"
+ 
+POL_SetupWindow_Init
+
+PREFIX="wine.2.12"
+
+if [ "$(POL_Wine_PrefixExists "$PREFIX")" = "False" ]
+then
+  # The préfixe doesn't exist
+  POL_Wine_SelectPrefix "wine.2.12"
+  POL_Wine_PrefixCreate "2.12-staging"
+  POL_Wine_InstallFonts
+else
+  POL_Wine_SelectPrefix "wine.2.12"
+  POL_Shortcut "gta-vc.exe" "GTA Vice City"
+  POL_Shortcut "VCMPBrowser.exe" "GTA Vice City Multiplayer"
 fi
 
-docker run \
-	-it \
-	--privileged \
-	--device /dev/dri/card0:/dev/dri/card0 \
-	--device /dev/snd \
-	-e DISPLAY \
-	-v $SCRIPTPATH/config:/home/wine:rw \
-	-v /tmp/.X11-unix:/tmp/.X11-unix:rw \
-	-v /dev/snd:/dev/snd:rw \
-	--hostname playonlinux-docker \
-	playonlinux
-
+POL_SetupWindow_Close
+exit

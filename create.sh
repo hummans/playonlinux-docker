@@ -14,4 +14,13 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this file.  If not, see <http://www.gnu.org/licenses/>.
+
+SCRIPTPATH="$( cd "$(dirname "$0")" ; pwd -P )"
+if [ ! -d "$SCRIPTPATH/config" ]; then
+  mkdir -p "$SCRIPTPATH/config"
+fi
+if [ ! -f "$SCRIPTPATH/.dockerignore" ]; then
+  echo "config" > "$SCRIPTPATH/.dockerignore"
+fi
+
 docker build -t playonlinux .

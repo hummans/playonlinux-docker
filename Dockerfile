@@ -17,7 +17,7 @@
 FROM ubuntu
 MAINTAINER Martin Gafner <gafner@puzzle.ch>
 
-RUN dpkg --add-architecture i386 && apt-get update && apt-get install -y sudo wine32 playonlinux
+RUN dpkg --add-architecture i386 && apt-get update && apt-get install -y alsa-base sudo wine32 playonlinux
 
 ENV USER wine
 ENV UID 1000
@@ -32,9 +32,16 @@ RUN echo "$USER:x:$UID:" >> /etc/group
 RUN echo "$USER ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/$USER
 RUN chmod 0440 /etc/sudoers.d/$USER
 RUN chown $UID:$GID -R $HOME
+RUN usermod -a -G audio $USER
 RUN usermod -a -G video $USER
 
-USER $USER
+COPY image-config/asound.conf /etc/
 
-ENTRYPOINT ["playonlinux"]
+USER $USER
+WORKDIR $HOME
+
+COPY pol-scripts/install_vcmp /usr/local/bin
+COPY docker-scripts/start.sh  /usr/local/bin
+
+ENTRYPOINT ["/usr/local/bin/start.sh"]
  
